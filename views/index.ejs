@@ -1,28 +1,43 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>my ejs template</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= 控制页面 %>
+    </title>
+    <!--Vue-->
+    <script src="/javascripts/vue.js"></script>
+    <script src="/javascripts/vue-resource.js"></script>
+    <!-- Bootstrap -->
+    <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+    <!--Flat UI-->
+    <link href="/stylesheets/flat-ui.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
-<body>
-<ul>
-    <% networks.forEach(function(networks){%>
-        <li><%=networks.ssid %></li>
-    <% }) %>
-</ul>
-</body>
 
 <body>
-<form action = "changeWifi" method="post">
-    新wifi SSID：<input type="text" name="wifi_ssid"/><br />
-    新wifi password：<input type="text" name="wifi_password"/><br />
-    <input type="submit" value="提交"/>
-</form>
+    <ul>
+        <% networks.forEach(function(networks){%>
+            <li>
+                <%=networks.ssid %>
+            </li>
+            <% }) %>
+    </ul>
+
+    <form action="changeWifi" method="post">
+        新wifi SSID：<input type="text" name="wifi_ssid" /><br /> 新wifi password：<input type="text" name="wifi_password" /><br />
+        <input type="submit" value="提交" />
+    </form>
+
+    <form action="sample" method="post">
+        采样率：<input type="text" name="sampletime" /><br />
+        <input type="submit" value="提交" />
+    </form>
+    <script src="/javascripts/jquery.js "></script>
+    <script src="/javascripts/flat-ui.js "></script>
+    <script src="/javascripts/application.js"></script>
 </body>
 
-<body>
-<form action = "sample" method="post">
-    采样率：<input type="text" name="sampletime"/><br />
-    <input type="submit" value="提交"/>
-</form>
-</body>
 </html>
