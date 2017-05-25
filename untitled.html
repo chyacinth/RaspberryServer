@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>my ejs template</title>
+</head>
+
+<body>
+    <p>Hi <%= title %></p>
+    <p>文章列表</p>
+    <ul>
+        <% items.forEach(function(item){%>
+                <li><%=item.title %></li>
+            <% }) %>
+    </ul>
+</body>
+</html>

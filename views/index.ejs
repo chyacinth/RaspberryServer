@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>my ejs template</title>
+</head>
+<body>
+<ul>
+    <% networks.forEach(function(networks){%>
+        <li><%=networks.ssid %></li>
+    <% }) %>
+</ul>
+</body>
+
+<body>
+<form action = "changeWifi" method="post">
+    新wifi SSID：<input type="text" name="wifi_ssid"/><br />
+    新wifi password：<input type="text" name="wifi_password"/><br />
+    <input type="submit" value="提交"/>
+</form>
+</body>
+
+<body>
+<form action = "sample" method="post">
+    采样率：<input type="text" name="sampletime"/><br />
+    <input type="submit" value="提交"/>
+</form>
+</body>
+</html>
