@@ -7,10 +7,11 @@ var request = require('superagent');
 var setCookie = require('set-cookie-parser');
 var real_sid;
 var socket;
+var piWifi = require("pi-wifi");
 
 
 wifi.init({
-    iface : 'en0' // network interface, choose a random wifi interface if set to null
+    iface : 'wlan0' // network interface, choose a random wifi interface if set to null
 });
 
 function lookUpAndSend(req, res) {
@@ -92,7 +93,17 @@ function userLogin(req, res)
 
 module.exports = function(app) {
     app.get('/',function (req, res) {
-        wifi.scan(function(err, networks) {
+	piWifi.scan(function cb(err,result)
+	{
+		console.log(err);
+		console.log(result);
+		if (result)
+		{
+	                res.render('index',{networks:result});
+		}
+	}
+	);
+/*        wifi.scan(function(err, networks) {
             if (err) {
                 console.log(err);
             } else {
@@ -100,15 +111,42 @@ module.exports = function(app) {
                 res.render('index',{networks:networks});
             }
         });
+*/
+
     });
     app.post('/sample',sample);
     app.post('/changeWifi', function (req, res) {
-        wifi.connect({ssid: req.body.wifi_ssid, password: req.body.wifi_password}, function (err) {
-            if (err) {
-                console.log(err);
-            }
-            console.log('Connected');
-        });
+	var ssid = req.body.wifi_ssid;
+	var password = req.body.wifi_password;
+	var status = 0;
+	var message = '';
+	var cb = function callback(err)
+	{
+		if (err) status = 0;
+		else status = 1;
+		console.log({status:status,msg:message});
+	}
+	if (password == '')
+	{
+		piWifi.openConnection(ssid,cb);
+	}
+	else
+	{
+		piWifi.check(ssid,function(err,result){
+			if (err) console.log('err is '+err); 
+			else console.log(result);
+		});
+		console.log(piWifi.connect(ssid,password,function(err)
+		{
+			console.log(ssid);
+			console.log(password);
+			console.log(err);
+			if (err) status = 0;
+			else status = 1;
+			console.log({status:status,msg:message});
+		}));
+	}
+
     });
     app.post('/userLogin', userLogin);
 };
