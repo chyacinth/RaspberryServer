@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" id="app">
         <div class="panel panel-default">
             <div class="panel-heading "><a href="#">Wifi 信息</a></div>
             <div class="panel-body">
@@ -34,14 +34,14 @@
         <div class="panel panel-default">
             <div class="panel-heading "><a href="#">Wifi 设置</a></div>
             <div class="panel-body">
-                <form action="changeWifi" class="form-horizontal" method="post" role="form">
+                <form class="form-horizontal" role="form">
                     <div class="form-group">
                         <label for="ssidWifi" class="col-lg-2 control-label">新wifi SSID：</label>
                         <div class="col-lg-10 input-group">
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-signal"></span>
                             </span>
-                            <input type="text" name="wifi_ssid" class="form-control" id="ssidWifi" />
+                            <input type="text" name="wifi_ssid" class="form-control" id="ssidWifi" v-model="wifissid" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -50,13 +50,13 @@
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-lock"></span>
                             </span>
-                            <input type="password" name="wifi_password" class="form-control" id="pwdWifi" />
+                            <input type="password" name="wifi_password" class="form-control" id="pwdWifi" v-model="wifipwd" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="submitWifi" class="col-lg-10 control-label sr-only"></label>
                         <div class="col-lg-2">
-                            <button type="submit" class="btn btn-primary btn-block" id="submitWifi">提交</button>
+                            <button type="button" class="btn btn-primary btn-block" id="submitWifi" :disabled="setwifi" @click="connwifi">提交</button>
                         </div>
                     </div>
                 </form>
@@ -65,20 +65,20 @@
         <div class="panel panel-default">
             <div class="panel-heading "><a href="#">采样率 设置</a></div>
             <div class="panel-body">
-                <form action="sample" method="post" role="form" class="form-horizontal">
+                <form role="form" class="form-horizontal">
                     <div class="form-group">
                         <label for="pick" class="col-lg-2 control-label">采样率：</label>
                         <div class="col-lg-10 input-group">
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-lock"></span>
                             </span>
-                            <input type="text" name="sampletime" class="form-control" id="pick" />
+                            <input type="text" name="sampletime" class="form-control" id="pick" v-model="pick" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="submitPick" class="col-lg-10 control-label sr-only"></label>
                         <div class="col-lg-2">
-                            <button type="submit" class="btn btn-primary btn-block" id="submitPick">提交</button>
+                            <button type="button" class="btn btn-primary btn-block" id="submitPick" :disabled="setpick" @click="changepick">提交</button>
                         </div>
                     </div>
                 </form>
@@ -88,6 +88,77 @@
     <script src="/javascripts/jquery.js "></script>
     <script src="/javascripts/flat-ui.js "></script>
     <script src="/javascripts/application.js"></script>
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                wifissid: "",
+                wifipwd: "",
+                pick: "",
+                status: "",
+                message: ""
+            },
+            computed: {
+                setwifi: function() {
+                    if (this.wifissid !== "" && this.wifipwd !== "") {
+                        return false;
+                    }
+                    return true;
+                },
+                setpick: function() {
+                    if (this.pick !== "") {
+                        return false;
+                    }
+                    return true;
+                }
+            },
+            methods: {
+                connwifi: function() {
+                    var data = {
+                        "wifi_ssid": this.wifissid,
+                        "wifi_password": this.wifipwd
+                    };
+                    this.$http.post('/changeWifi', data).then(
+                        function(response) {
+                            if (response.data.status == 1) {
+                                app.status = "Success!";
+                                app.message = response.data.msg;
+                                $('#warning').modal({});
+                            } else if (response.data.status == 0) {
+                                app.status = "Error!";
+                                app.message = `Something wrong while logging ERR:${response.data.msg}`;
+                                $('#warning').modal({});
+                            }
+                        },
+                        function(err) {
+                            console.log(err);
+                        }
+                    )
+                },
+                changepick: function() {
+                    var data = {
+                        "sampletime": this.pick
+                    };
+                    this.$http.post('/sample', data).then(
+                        function(response) {
+                            if (response.data.status == 1) {
+                                app.status = "Success!";
+                                app.message = response.data.msg;
+                                $('#warning').modal({});
+                            } else if (response.data.status == 0) {
+                                app.status = "Error!";
+                                app.message = `Something wrong while logging ERR:${response.data.msg}`;
+                                $('#warning').modal({});
+                            }
+                        },
+                        function(err) {
+                            console.log(err);
+                        }
+                    )
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
