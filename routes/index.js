@@ -27,22 +27,8 @@ function lookUpAndSend(req, res) {
     }
 }
 
-function sample (req, res) {
-    var newtime = req.body.sampletime;
-    console.log(newtime);
-    //stop previous Sampling function
-    if (newtime === undefined) newtime = 1;
-    if (sample.previousSample === undefined)
-    {
-       sample.previousSample = 0;
-    }
-    else
-    {
-        clearInterval(sample.previousSample);
-    }
-    sample.previousSample = setInterval(lookUpAndSend, newtime*1000);
-    //lookUpAndSend();
-
+function login (req, res) {
+    res.render('login');
 }
 
 function userLogin(req, res)
@@ -96,7 +82,7 @@ module.exports = function(app) {
                 }
             );
         }
-        else res.redirect('/userLogin');
+        else res.redirect('/login');
     });
     app.post('/changeWifi', function (req, res) {
 	var ssid = req.body.wifi_ssid;
@@ -131,5 +117,6 @@ module.exports = function(app) {
 	}
 
     });
+    app.get('/login', login);
     app.post('/userLogin', userLogin);
 };
