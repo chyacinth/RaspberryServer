@@ -99,7 +99,10 @@ function sample (req, res) {
     {
         clearInterval(sample.previousSample);
     }
-    sample.previousSample = setInterval(lookUpAndSend, newtime*1000);
+    if (newtime == 0)
+        delete sample.previousSample;
+    else
+        sample.previousSample = setInterval(lookUpAndSend, newtime*1000);
     //lookUpAndSend();
 
     console.log('Yes!');
