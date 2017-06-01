@@ -86,6 +86,25 @@ function userLogin(req, res)
         });
 }
 
+function sample (req, res) {
+    var newtime = req.body.sampletime;
+    console.log(newtime);
+    //stop previous Sampling function
+    if (newtime === undefined) newtime = 1;
+    if (sample.previousSample === undefined)
+    {
+        sample.previousSample = 0;
+    }
+    else
+    {
+        clearInterval(sample.previousSample);
+    }
+    sample.previousSample = setInterval(lookUpAndSend, newtime*1000);
+    //lookUpAndSend();
+
+    console.log('Yes!');
+}
+
 module.exports = function(app) {
     app.get('/',function (req, res) {
         if (req.session.sid) {
@@ -100,6 +119,8 @@ module.exports = function(app) {
         }
         else res.redirect('/login');
     });
+
+
     app.post('/changeWifi', function (req, res) {
 	var ssid = req.body.wifi_ssid;
 	var password = req.body.wifi_password;
@@ -135,4 +156,5 @@ module.exports = function(app) {
     });
     app.get('/login', login);
     app.post('/userLogin', userLogin);
+    app.post('/sample', sample);
 };
