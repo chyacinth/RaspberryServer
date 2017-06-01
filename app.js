@@ -22,17 +22,17 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
 // set the session
 app.use(session({
     key: 'session_cookie_name',
     secret: 'session_cookie_secret',
     resave: true,
-    saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { secure: false },
+    //resave: false,
+    saveUninitialized: true
 }));
 
+app.use(express.static(path.join(__dirname, 'public')));
 routes(app);
 
 

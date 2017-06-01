@@ -33,6 +33,8 @@ function login (req, res) {
 
 function userLogin(req, res)
 {
+    var status = 0;
+    var msg = '';
     request
         .post('http://45.63.50.188/login/login')
         .send({ username: req.body.username, password: req.body.password }) // sends a JSON post body
@@ -42,12 +44,20 @@ function userLogin(req, res)
             if (err)
             {
                 res.redirect('/');
+                status = 0;
+                msg = 'send request fails';
+                res.json({status:status, msg:msg});
+                return;
             }
             if (result)
             {
                 if (result.body.status === 0)
                 {
+                    status = 0;
+                    msg = 'get cookies fails';
+                    res.json({status:status, msg:msg});
                     res.redirect('/');
+                    return;
                 }
                 else
                 {
@@ -61,10 +71,16 @@ function userLogin(req, res)
                     real_sid = cookies[0].value.replace( prefix, "" );
                     real_sid = signature.unsign( real_sid, 'keyboard cat');
                     req.session.sid = real_sid;
+                    req.session.save();
+                    console.log('sid is '+req.session.sid);
                     socket = io('http://45.63.50.188/?sessionID=' + real_sid);
 
                     console.log(cookies);
                     console.log("成功登陆！");
+                    status = 1;
+                    msg = '成功登陆!';
+                    res.json({status:status, msg:msg});
+                    return;
                 }
             }
         });
