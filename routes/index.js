@@ -53,7 +53,7 @@ function userLogin(req, res)
     var status = 0;
     var msg = '';
     request
-        .post('http://192.168.1.104/login/login')
+        .post('http://45.63.50.188/login/login')
         .send({ username: req.body.username, password: req.body.password }) // sends a JSON post body
         .set('Accept', 'application/json')
         .end(function(err, result){
@@ -90,7 +90,7 @@ function userLogin(req, res)
                     req.session.sid = real_sid;
                     req.session.save();
                     console.log('sid is '+req.session.sid);
-                    socket = io('http://192.168.1.104/?sessionID=' + real_sid);
+                    socket = io('http://45.63.50.188/?sessionID=' + real_sid);
                     socket.on('getpm',function(){
                         if (socket) {
                             db.each("SELECT * FROM pm WHERE id = (SELECT MAX(id)  FROM pm);", function (err, row) {
