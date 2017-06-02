@@ -26,16 +26,23 @@ function lookUpAndSend(req, res) {
                         db.each("SELECT * FROM light WHERE id = (SELECT MAX(id) FROM light);", function (err, row) {
                             var lightdata = row.data;
                             var timestamp = Date.parse(new Date());
-                            //send data
-                            console.log(row.id + ": " + humiditydata+' '+temporarydata + ' ' + pmdata + ' ' +lightdata + timestamp);
-                            socket.emit('senddata', {
-                                humiditydata: humiditydata,
-                                temporarydata: temporarydata,
-                                pmdata: pmdata,
-                                lightdata: lightdata,
-                                timestamp: timestamp
+                            db.each("SELECT * FROM location WHERE id = (SELECT MAX(id) FROM location);", function (err, row) {
+                                //send data
+                                var longtitude = row.longtitude;
+                                var latitude = row.latitude;
+                                console.log(row.id + ": " + humiditydata + ' ' + temporarydata + ' ' + pmdata + ' ' +
+                                    lightdata + ' ' + timestamp + ' ' + row.longtitude + ' ' + row.latitude);
+                                socket.emit('senddata', {
+                                    humiditydata: humiditydata,
+                                    temporarydata: temporarydata,
+                                    pmdata: pmdata,
+                                    lightdata: lightdata,
+                                    timestamp: timestamp,
+                                    longtitude: longtitude,
+                                    latitude: latitude
+                                });
+                                console.log('Yes!');
                             });
-                            console.log('Yes!');
                         });
                     });
                 });
