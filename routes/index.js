@@ -27,7 +27,7 @@ function lookUpAndSend(req, res) {
                             var lightdata = row.data;
                             var timestamp = Date.parse(new Date());
                             //send data
-                            console.log(row.id + ": " + humiditydata+' '+temporarydata + ' ' + pmdata + ' ' +lightdata);
+                            console.log(row.id + ": " + humiditydata+' '+temporarydata + ' ' + pmdata + ' ' +lightdata + timestamp);
                             socket.emit('senddata', {
                                 humiditydata: humiditydata,
                                 temporarydata: temporarydata,
