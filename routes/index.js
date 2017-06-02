@@ -91,7 +91,16 @@ function userLogin(req, res)
                     req.session.save();
                     console.log('sid is '+req.session.sid);
                     socket = io('http://192.168.1.104/?sessionID=' + real_sid);
-
+                    socket.on('getpm',function(){
+                        if (socket) {
+                            db.each("SELECT * FROM pm WHERE id = (SELECT MAX(id)  FROM pm);", function (err, row) {
+                                var pmdata = row.data;
+                                socket.emit('setpm', {
+                                    pmdata: pmdata
+                                });
+                            });
+                        }
+                    });
                     console.log(cookies);
                     console.log("成功登陆！");
                     status = 1;
