@@ -18,10 +18,27 @@ function lookUpAndSend(req, res) {
     if (socket) {
         db.serialize(function () {
             db.each("SELECT * FROM humidity WHERE id = (SELECT MAX(id)  FROM humidity);", function (err, row) {
-                //send data
-                console.log(row.id + ": " + row.data);
-                socket.emit('senddata',{data:row.data});
-                console.log('Yes!');
+                var humiditydata = row.data;
+                db.each("SELECT * FROM temporary WHERE id = (SELECT MAX(id)  FROM temporary);", function (err, row) {
+                    var temporarydata = row.data;
+                    db.each("SELECT * FROM pm WHERE id = (SELECT MAX(id)  FROM pm);", function (err, row) {
+                        var pmdata = row.data;
+                        db.each("SELECT * FROM light WHERE id = (SELECT MAX(id)  FROM light);", function (err, row) {
+                            var lightdata = row.data;
+                            var timestamp = Date.parse(new Date());
+                            //send data
+                            console.log(row.id + ": " + humidi);
+                            socket.emit('senddata', {
+                                humiditydata: humiditydata,
+                                temporarydata: temporarydata,
+                                pmdata: pmdata,
+                                lightdata: lightdata,
+                                timestamp: timestampe
+                            });
+                            console.log('Yes!');
+                        });
+                    });
+                });
             });
         });
     }
