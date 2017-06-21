@@ -27,41 +27,35 @@ function lookUpAndSend(req, res) {
                         var pmdata = row.data;
                         db.each("SELECT * FROM light WHERE id = (SELECT MAX(id) FROM light);", function(err, row) {
                             var lightdata = row.data;
-                            var timestamp = Date.parse(new Date());
-                            db.each("SELECT * FROM location WHERE id = (SELECT MAX(id) FROM location);", function(err, row) {
-                                //send data
-                                if (err) {
-                                    console.log(err);
-                                }
-                                if (row) {
-                                    var longtitude = row.longtitude;
-                                    var latitude = row.latitude;
-                                } else {
-                                    var longtitude = 30;
-                                    var latitude = 120;
-                                }
-                                console.log(row.id + ": " + humiditydata + ' ' + temporarydata + ' ' + pmdata + ' ' +
-                                    lightdata + ' ' + timestamp + ' ' + row.longtitude + ' ' + row.latitude);
-                                socket.emit('senddata', {
-                                    humiditydata: humiditydata,
-                                    temporarydata: temporarydata,
-                                    pmdata: pmdata,
-                                    lightdata: lightdata,
-                                    timestamp: timestamp,
-                                    longtitude: longtitude,
-                                    latitude: latitude
+                            db.each("SELECT * FROM latitude WHERE id = (SELECT MAX(id) FROM latitude);", function(err, row) {
+                                var latitude = row.data;
+                                db.each("SELECT * FROM latitude WHERE id = (SELECT MAX(id) FROM latitude);", function(err, row) {
+                                    var longtitude = row.data;
+                                    var timestamp = Date.parse(new Date());
+                                    //send data
+                                    console.log(row.id + ": " + humiditydata + ' ' + temporarydata + ' ' + pmdata + ' ' +
+                                        lightdata + ' ' + timestamp + ' ' + row.longtitude + ' ' + row.latitude);
+                                    socket.emit('senddata', {
+                                        humiditydata: humiditydata,
+                                        temporarydata: temporarydata,
+                                        pmdata: pmdata,
+                                        lightdata: lightdata,
+                                        timestamp: timestamp,
+                                        longtitude: longtitude,
+                                        latitude: latitude
+                                    });
+                                    if (lightdata >= lightThreshold && flag) {
+                                        socket.emit("clock", {
+                                            title: "闹钟",
+                                            msg: `现在的光照强度为${lightdata}`
+                                        })
+                                        flag = false;
+                                    }
+                                    if (lightdata < lightThreshold && !flag) {
+                                        flag = true;
+                                    }
+                                    console.log('Yes!');
                                 });
-                                if (lightdata >= lightThreshold && flag) {
-                                    socket.emit("clock", {
-                                        title: "闹钟",
-                                        msg: `现在的光照强度为${lightdata}`
-                                    })
-                                    flag = false;
-                                }
-                                if (lightdata < lightThreshold && !flag) {
-                                    flag = true;
-                                }
-                                console.log('Yes!');
                             });
                         });
                     });
