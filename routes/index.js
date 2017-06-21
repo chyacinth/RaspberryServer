@@ -78,7 +78,7 @@ function userLogin(req, res) {
         .end(function(err, result) {
             // Calling the end function will send the request
             if (err) {
-                res.redirect('/');
+                // res.redirect('/');
                 status = 0;
                 msg = 'send request fails';
                 res.json({ status: status, msg: msg });
@@ -190,7 +190,7 @@ function isEmptyObject(obj) {
 
 module.exports = function(app) {
     app.get('/', function(req, res) {
-        request.get('http://45.63.50.188/').timeout(500).end(function(err, res) {
+        request.get('http://45.63.50.188/').timeout(500).end(function(err, result) {
             if (err) {
                 console.log(err);
                 res.redirect('/changeWifi');
