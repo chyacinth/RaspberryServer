@@ -34,7 +34,7 @@ function lookUpAndSend(req, res) {
                                     var timestamp = Date.parse(new Date());
                                     //send data
                                     console.log(row.id + ": " + humiditydata + ' ' + temporarydata + ' ' + pmdata + ' ' +
-                                        lightdata + ' ' + timestamp + ' ' + row.longtitude + ' ' + row.latitude);
+                                        lightdata + ' ' + timestamp + ' ' + longtitude + ' ' + latitude);
                                     socket.emit('senddata', {
                                         humiditydata: humiditydata,
                                         temporarydata: temporarydata,
