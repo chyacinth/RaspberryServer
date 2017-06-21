@@ -41,6 +41,12 @@ function lookUpAndSend(req, res) {
                                     longtitude: longtitude,
                                     latitude: latitude
                                 });
+                                if (lightdata >= 100) {
+                                    socket.emit("clock", {
+                                        title: "闹钟",
+                                        msg: `现在的光照强度为${lightdata}`
+                                    })
+                                }
                                 console.log('Yes!');
                             });
                         });
