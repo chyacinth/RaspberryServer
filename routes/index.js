@@ -119,7 +119,10 @@ function userLogin(req, res) {
                                                 var timestamp = Date.parse(new Date());
                                                 db.each("SELECT * FROM location WHERE id = (SELECT MAX(id) FROM location);", function(err, row) {
                                                     //send data
-                                                    if (!isEmptyObject(row)) {
+                                                    if (err) {
+                                                        console.log(err);
+                                                    }
+                                                    if (row) {
                                                         var longtitude = row.longtitude;
                                                         var latitude = row.latitude;
                                                     } else {
