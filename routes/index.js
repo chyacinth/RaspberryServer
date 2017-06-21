@@ -8,6 +8,8 @@ var setCookie = require('set-cookie-parser');
 var real_sid;
 var socket;
 var piWifi = require("pi-wifi");
+var flag = true;
+var lightThreshold = 100;
 
 
 wifi.init({
@@ -41,11 +43,15 @@ function lookUpAndSend(req, res) {
                                     longtitude: longtitude,
                                     latitude: latitude
                                 });
-                                if (lightdata >= 100) {
+                                if (lightdata >= lightThreshold && flag) {
                                     socket.emit("clock", {
                                         title: "闹钟",
                                         msg: `现在的光照强度为${lightdata}`
                                     })
+                                    flag = false;
+                                }
+                                if (lightdata < lightThreshold && !flag) {
+                                    flag = true;
                                 }
                                 console.log('Yes!');
                             });
@@ -132,6 +138,11 @@ function userLogin(req, res) {
                                     });
                                 });
                             });
+                        }
+                    });
+                    socket.on('thres', function(data) {
+                        if (data.threshold) {
+                            lightThreshold = data.threshold;
                         }
                     });
                     console.log(cookies);
