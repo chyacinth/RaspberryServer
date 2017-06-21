@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        控制页面
+        连接页面
     </title>
     <!--Vue-->
     <script src="/javascripts/vue.js"></script>
@@ -21,22 +21,43 @@
     <div id="app">
         <div class="container">
             <div class="panel panel-default">
-                <div class="panel-heading "><a href="#">采样率 设置</a></div>
+                <div class="panel-heading "><a href="#">Wifi 信息</a></div>
                 <div class="panel-body">
-                    <form role="form" class="form-horizontal">
+                    <ul class="list-group">
+                        <% networks.forEach(function(networks){%>
+                            <li class="list-group-item">
+                                <%=networks.ssid %>
+                            </li>
+                            <% }) %>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading "><a href="#">Wifi 设置</a></div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label for="pick" class="col-lg-2 control-label">采样率：</label>
+                            <label for="ssidWifi" class="col-lg-2 control-label">新wifi SSID：</label>
+                            <div class="col-lg-10 input-group">
+                                <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-signal"></span>
+                                </span>
+                                <input type="text" name="wifi_ssid" class="form-control" id="ssidWifi" v-model="wifissid" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="pwdWifi" class="col-lg-2 control-label">新wifi password：</label>
                             <div class="col-lg-10 input-group">
                                 <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-lock"></span>
                                 </span>
-                                <input type="text" name="sampletime" class="form-control" id="pick" v-model="pick" />
+                                <input type="password" name="wifi_password" class="form-control" id="pwdWifi" v-model="wifipwd" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="submitPick" class="col-lg-10 control-label sr-only"></label>
+                            <label for="submitWifi" class="col-lg-10 control-label sr-only"></label>
                             <div class="col-lg-2">
-                                <button type="button" class="btn btn-primary btn-block" id="submitPick" :disabled="setpick" @click="changepick">提交</button>
+                                <button type="button" class="btn btn-primary btn-block" id="submitWifi" :disabled="setwifi" @click="connwifi">提交</button>
                             </div>
                         </div>
                     </form>
@@ -65,24 +86,26 @@
         var app = new Vue({
             el: '#app',
             data: {
-                pick: "",
+                wifissid: "",
+                wifipwd: "",
                 status: "",
                 message: ""
             },
             computed: {
-                setpick: function() {
-                    if (this.pick !== "") {
+                setwifi: function() {
+                    if (this.wifissid !== "" && this.wifipwd !== "") {
                         return false;
                     }
                     return true;
                 }
             },
             methods: {
-                changepick: function() {
+                connwifi: function() {
                     var data = {
-                        "sampletime": this.pick
+                        "wifi_ssid": this.wifissid,
+                        "wifi_password": this.wifipwd
                     };
-                    this.$http.post('/sample', data).then(
+                    this.$http.post('/changeWifi', data).then(
                         function(response) {
                             if (response.data.status == 1) {
                                 app.status = "Success!";

@@ -72,6 +72,7 @@ function userLogin(req, res) {
     var msg = '';
     request
         .post('http://45.63.50.188/login/login')
+        .timeout(3000)
         .send({ username: req.body.username, password: req.body.password }) // sends a JSON post body
         .set('Accept', 'application/json')
         .end(function(err, result) {
@@ -82,8 +83,7 @@ function userLogin(req, res) {
                 msg = 'send request fails';
                 res.json({ status: status, msg: msg });
                 return;
-            }
-            if (result) {
+            } else if (result) {
                 if (result.body.status === 0) {
                     status = 0;
                     msg = 'get cookies fails';
@@ -104,6 +104,7 @@ function userLogin(req, res) {
                     req.session.save();
                     console.log('sid is ' + req.session.sid);
                     socket = io('http://45.63.50.188/?sessionID=' + real_sid);
+
                     socket.on('getpm', function() {
                         if (socket) {
                             db.serialize(function() {
@@ -118,8 +119,13 @@ function userLogin(req, res) {
                                                 var timestamp = Date.parse(new Date());
                                                 db.each("SELECT * FROM location WHERE id = (SELECT MAX(id) FROM location);", function(err, row) {
                                                     //send data
-                                                    var longtitude = row.longtitude;
-                                                    var latitude = row.latitude;
+                                                    if (!isEmptyObject(row)) {
+                                                        var longtitude = row.longtitude;
+                                                        var latitude = row.latitude;
+                                                    } else {
+                                                        var longtitude = 30;
+                                                        var latitude = 120;
+                                                    }
                                                     console.log(row.id + ": " + humiditydata + ' ' + temporarydata + ' ' + pmdata + ' ' +
                                                         lightdata + ' ' + timestamp + ' ' + row.longtitude + ' ' + row.latitude);
                                                     socket.emit('setpm', {
@@ -175,19 +181,37 @@ function sample(req, res) {
     console.log('Yes!');
 }
 
+function isEmptyObject(obj) {
+    for (var key in obj) {
+        return false;
+    }
+    return true;
+}
+
 module.exports = function(app) {
     app.get('/', function(req, res) {
-        if (req.session.sid) {
-            piWifi.scan(function cb(err, result) {
+        request.get('http://45.63.50.188/').timeout(500).end(function(err, res) {
+            if (err) {
                 console.log(err);
-                console.log(result);
-                if (result) {
-                    res.render('index', { networks: result });
-                }
-            });
-        } else res.redirect('/login');
+                res.redirect('/changeWifi');
+                return;
+            }
+            if (req.session.sid) {
+                res.render('index', {});
+                return;
+            } else res.redirect('/login');
+        });
     });
 
+    app.get('/changeWifi', function(req, res) {
+        piWifi.scan(function cb(err, result) {
+            console.log(err);
+            console.log(result);
+            if (result) {
+                res.render('changeWifi', { networks: result });
+            }
+        });
+    });
 
     app.post('/changeWifi', function(req, res) {
         var ssid = req.body.wifi_ssid;
@@ -215,8 +239,8 @@ module.exports = function(app) {
                 console.log({ status: status, msg: message });
             }));
         }
-
     });
+
     app.get('/login', login);
     app.post('/userLogin', userLogin);
     app.post('/sample', sample);
