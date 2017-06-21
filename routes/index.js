@@ -190,7 +190,7 @@ function isEmptyObject(obj) {
 
 module.exports = function(app) {
     app.get('/', function(req, res) {
-        request.get('http://45.63.50.188/login').timeout(500).end(function(err, result) {
+        request.get('http://45.63.50.188/login').timeout(1000).end(function(err, result) {
             if (err) {
                 console.log(err);
                 res.redirect('/changeWifi');
