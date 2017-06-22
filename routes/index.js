@@ -29,7 +29,7 @@ function lookUpAndSend(req, res) {
                             var lightdata = row.data;
                             db.each("SELECT * FROM latitude WHERE id = (SELECT MAX(id) FROM latitude);", function(err, row) {
                                 var latitude = row.data;
-                                db.each("SELECT * FROM longtitude WHERE id = (SELECT MAX(id) FROM longtitude);", function(err, row) {
+                                db.each("SELECT * FROM longitude WHERE id = (SELECT MAX(id) FROM longitude);", function(err, row) {
                                     var longtitude = row.data;
                                     var timestamp = Date.parse(new Date());
                                     //send data
