@@ -1,5 +1,5 @@
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('raspdb.db');
+var db = new sqlite3.Database('/home/pi/workspace/respberryServer/raspdb.db');
 var wifi = require('node-wifi');
 var io = require('socket.io-client');
 var cookies = '';
