@@ -42,6 +42,28 @@
                     </form>
                 </div>
             </div>
+            <div class="panel panel-default">
+                <div class="panel-heading "><a href="#">闹钟阈值 设置</a></div>
+                <div class="panel-body">
+                    <form role="form" class="form-horizontal">
+                        <div class="form-group">
+                            <label for="thres" class="col-lg-2 control-label">阈值：</label>
+                            <div class="col-lg-10 input-group">
+                                <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-lock"></span>
+                                </span>
+                                <input type="text" name="sampletime" class="form-control" id="thres" v-model="thres" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="submitThres" class="col-lg-10 control-label sr-only"></label>
+                            <div class="col-lg-2">
+                                <button type="button" class="btn btn-primary btn-block" id="submitThres" :disabled="setThres" @click="changeThres">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
         <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="warning">
             <div class="modal-dialog modal-sm" role="document">
@@ -66,6 +88,7 @@
             el: '#app',
             data: {
                 pick: "",
+                thres: "",
                 status: "",
                 message: ""
             },
@@ -73,6 +96,13 @@
                 setpick: function() {
                     if (this.pick !== "") {
                         return false;
+                    }
+                    return true;
+                },
+                setThres: function() {
+                    if (this.thres !== "") {
+                        var r = /^\+?[1-9][0-9]*$/;
+                        return !r.test(this.thres);
                     }
                     return true;
                 }
@@ -83,6 +113,27 @@
                         "sampletime": this.pick
                     };
                     this.$http.post('/sample', data).then(
+                        function(response) {
+                            if (response.data.status == 1) {
+                                app.status = "Success!";
+                                app.message = response.data.msg;
+                                $('#warning').modal({});
+                            } else if (response.data.status == 0) {
+                                app.status = "Error!";
+                                app.message = `Something wrong while logging ERR:${response.data.msg}`;
+                                $('#warning').modal({});
+                            }
+                        },
+                        function(err) {
+                            console.log(err);
+                        }
+                    )
+                },
+                changeThres: function() {
+                    var data = {
+                        "threshold": this.thres
+                    };
+                    this.$http.post('/threshold', data).then(
                         function(response) {
                             if (response.data.status == 1) {
                                 app.status = "Success!";

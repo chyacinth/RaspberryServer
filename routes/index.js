@@ -29,7 +29,7 @@ function lookUpAndSend(req, res) {
                             var lightdata = row.data;
                             db.each("SELECT * FROM latitude WHERE id = (SELECT MAX(id) FROM latitude);", function(err, row) {
                                 var latitude = row.data;
-                                db.each("SELECT * FROM latitude WHERE id = (SELECT MAX(id) FROM latitude);", function(err, row) {
+                                db.each("SELECT * FROM longtitude WHERE id = (SELECT MAX(id) FROM longtitude);", function(err, row) {
                                     var longtitude = row.data;
                                     var timestamp = Date.parse(new Date());
                                     //send data
@@ -120,7 +120,7 @@ function userLogin(req, res) {
                                                 var lightdata = row.data;
                                                 db.each("SELECT * FROM latitude WHERE id = (SELECT MAX(id) FROM latitude);", function(err, row) {
                                                     var latitude = row.data;
-                                                    db.each("SELECT * FROM latitude WHERE id = (SELECT MAX(id) FROM latitude);", function(err, row) {
+                                                    db.each("SELECT * FROM longtitude WHERE id = (SELECT MAX(id) FROM longtitude);", function(err, row) {
                                                         var longtitude = row.data;
                                                         var timestamp = Date.parse(new Date());
                                                         //send data
@@ -243,4 +243,8 @@ module.exports = function(app) {
     app.get('/login', login);
     app.post('/userLogin', userLogin);
     app.post('/sample', sample);
+    app.post('/threshold', function(req, res) {
+        var thres = Number(req.body.threshold);
+        lightThreshold = thres;
+    });
 };
