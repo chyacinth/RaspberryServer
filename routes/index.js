@@ -246,5 +246,9 @@ module.exports = function(app) {
     app.post('/threshold', function(req, res) {
         var thres = Number(req.body.threshold);
         lightThreshold = thres;
+        res.json({
+            status: 1,
+            msg: "成功修改!"
+        })
     });
 };
