@@ -193,7 +193,7 @@ function isEmptyObject(obj) {
 
 module.exports = function(app) {
     app.get('/', function(req, res) {
-        request.get('http://45.63.50.188/login').timeout(1000).end(function(err, result) {
+        request.get('http://45.63.50.188/login').timeout(3000).end(function(err, result) {
             if (err) {
                 console.log(err);
                 res.redirect('/changeWifi');
@@ -239,7 +239,7 @@ module.exports = function(app) {
                 console.log(err);
                 if (err) status = 0;
                 else status = 1;
-                console.log({ status: status, msg: message });
+                res.json({ status: status, msg: message });
             }));
         }
     });
