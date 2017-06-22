@@ -178,6 +178,10 @@ function sample(req, res) {
     //lookUpAndSend();
 
     console.log('Yes!');
+    res.json({
+        status: 1,
+        msg: "修改成功"
+    })
 }
 
 function isEmptyObject(obj) {
